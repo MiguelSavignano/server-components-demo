@@ -4,8 +4,8 @@
 * [When will I be able to use this?](#when-will-i-be-able-to-use-this)
 * [Setup](#setup)
 * [DB Setup](#db-setup)
-  + [Step 1. Create the Database](#step-1-create-the-database)
-  + [Step 2. Connect to the Database](#step-2-connect-to-the-database)
+  + [Step 1. Start the Database server](#step-1-start-the-database-server)
+  + [Step 2. Create the Database and tables](#step-2-create-the-database-and-tables)
   + [Step 3. Run the seed script](#step-3-run-the-seed-script)
 * [Notes about this app](#notes-about-this-app)
   + [Interesting things to try](#interesting-things-to-try)
@@ -38,41 +38,26 @@ The app won't work until you set up the database, as described below.
 
 ## DB Setup
 
-This demo uses Postgres. First, follow its [installation link](https://wiki.postgresql.org/wiki/Detailed_installation_guides) for your platform.
+This demo uses Postgres. If you don't have Postgres already installed, you can use docker-compose.
 
 Alternatively you can check out this [fork](https://github.com/pomber/server-components-demo/) which will let you run the demo app without needing a database. However you won't be able to execute SQL queries, but fetch should still work.
 
-The below example will setup the database for this app, assuming that you have a UNIX-like platform:
 
-### Step 1. Create the Database
+### Step 1. Start the Database server
 
-```
-psql postgres
-
-CREATE DATABASE notesapi;
-CREATE ROLE notesadmin WITH LOGIN PASSWORD 'password';
-ALTER ROLE notesadmin WITH SUPERUSER;
-ALTER DATABASE notesapi OWNER TO notesadmin;
-\q
-```
-
-### Step 2. Connect to the Database
+Start the Postgres server with notesadmin user.
 
 ```
-psql -d postgres -U notesadmin;
+docker-compose up -d
+```
+**Note**: To stop the postgres server use `docker-compose down` or clear all data with `docker-compose down -v`
 
-\c notesapi
 
-DROP TABLE IF EXISTS notes;
-CREATE TABLE notes (
-  id SERIAL PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  title TEXT,
-  body TEXT
-);
 
-\q
+### Step 2. Create the Database and tables
+
+```
+docker-compose exec postgresql psql -d postgres -U notesadmin -f database-setup.sql
 ```
 
 ### Step 3. Run the seed script
