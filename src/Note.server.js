@@ -12,9 +12,6 @@ import {format} from 'date-fns';
 import path from 'path';
 
 import {db} from './db.server';
-import NotePreview from './NotePreview';
-import EditButton from './EditButton.client';
-import NoteEditor from './NoteEditor.client';
 
 export default function Note({selectedId, isEditing}) {
   const note =
@@ -24,9 +21,7 @@ export default function Note({selectedId, isEditing}) {
 
   if (note === null) {
     if (isEditing) {
-      return (
-        <NoteEditor noteId={null} initialTitle="Untitled" initialBody="" />
-      );
+      return null;
     } else {
       return (
         <div className="note--empty-state">
@@ -58,10 +53,8 @@ export default function Note({selectedId, isEditing}) {
             <small className="note-updated-at" role="status">
               Last updated on {format(updatedAt, "d MMM yyyy 'at' h:mm bb")}
             </small>
-            <EditButton noteId={id}>Edit</EditButton>
           </div>
         </div>
-        <NotePreview body={body} />
       </div>
     );
   }
