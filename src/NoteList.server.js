@@ -29,7 +29,7 @@ export default function NoteList({searchText}) {
     <ul className="notes-list">
       {notes.map((note) => (
         <li key={note.id}>
-          <SidebarNote note={note} />
+          {note.title}
         </li>
       ))}
     </ul>
