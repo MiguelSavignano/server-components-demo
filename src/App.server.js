@@ -15,6 +15,7 @@ export const db = new Pool(credentials);
 export default function App({searchText}) {
   return (
     <div className="main">
+      <Button>Button</Button>
       <section className="col note-viewer">
         <NoteList searchText={searchText} />
       </section>
