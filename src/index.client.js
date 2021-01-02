@@ -8,9 +8,23 @@
 
 import {unstable_createRoot} from 'react-dom';
 import {useState, useEffect, Suspense} from 'react';
+import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 import {createFromFetch} from 'react-server-dom-webpack';
 // import {processBinaryChunkFromResponse} from './react-server-dom-webpack';
+function createResponseCache() {
+  return new Map();
+}
+
+export function useCreateFromFetch(key, fetchRequest) {
+  const cache = unstable_getCacheForType(createResponseCache);
+  let response = cache.get(key);
+  if (response) return response;
+
+  response = createFromFetch(fetchRequest);
+  cache.set(key, response);
+  return response;
+}
 
 function Root({initialCache}) {
   return (
@@ -43,12 +57,13 @@ function Content() {
 
 function Content2() {
   const [location, setLocation] = useState({searchText: ''});
+  const key = JSON.stringify(location);
+  const response = useCreateFromFetch(key, fetch('/react?location=' + encodeURIComponent(key)))
+  // const response = createFromFetch(
+      // fetch(`/react?location=${encodeURIComponent(JSON.stringify(location))}`)
+    // );
 
-  const response = createFromFetch(
-      fetch(`/react?location=${encodeURIComponent(JSON.stringify(location))}`)
-    );
-
-  return response ? response.readRoot() : null;
+  return response.readRoot();
 }
 
 function Error({error}) {
