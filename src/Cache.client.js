@@ -6,34 +6,7 @@
  *
  */
 
-import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
-import {createFromFetch} from 'react-server-dom-webpack';
 
-function createResponseCache() {
-  return new Map();
-}
-
-export function useRefresh() {
-  const refreshCache = unstable_useCacheRefresh();
-  return function refresh(key, seededResponse) {
-    refreshCache(createResponseCache, new Map([[key, seededResponse]]));
-  };
-}
-
-export function useServerResponse(location) {
-  const key = JSON.stringify(location);
-  const cache = unstable_getCacheForType(createResponseCache);
-  let response = cache.get(key);
-  if (response) {
-    return response;
-  }
-  response = createFromFetch(
-    fetch('/react?location=' + encodeURIComponent(key))
-  );
-  console.log({response})
-  cache.set(key, response);
-  return response;
-}
 
 
 // fetch("http://localhost:4000/react?location=%7B%22selectedId%22%3Anull%2C%22isEditing%22%3Afalse%2C%22searchText%22%3A%22%22%7D", {
