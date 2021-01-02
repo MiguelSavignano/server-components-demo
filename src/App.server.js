@@ -8,15 +8,15 @@
 
 import {Pool} from 'react-pg';
 import credentials from '../credentials.json';
-import {Button} from './SearchField.client';
+import {SearchField} from './SearchField.client';
 
 export const db = new Pool(credentials);
 
 export default function App({searchText}) {
   return (
     <div className="main">
-      <Button>Button</Button>
       <section className="col note-viewer">
+        <SearchField />
         <NoteList searchText={searchText} />
       </section>
     </div>
