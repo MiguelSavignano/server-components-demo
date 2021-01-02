@@ -575,6 +575,7 @@ function startReadingFromStream(response, stream) {
     }
 
     var buffer = value;
+    console.log("buffer", buffer)
     processBinaryChunk(response, buffer);
     return reader.read().then(progress, error);
   }

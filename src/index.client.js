@@ -32,9 +32,12 @@ function Content() {
   const key = JSON.stringify(location);
   const [response, setResponse] = useState(cache.get(key));
 
-  useEffect(async () => {
-    const reactTree = await createFromFetch(fetch('/react?location=' + encodeURIComponent(key)));
-    setResponse(reactTree)
+  useEffect(() => {
+    async function fetchData(){
+      const reactTree = await createFromFetch(fetch('/react?location=' + encodeURIComponent(key)));
+      setResponse(reactTree)
+    }
+    fetchData()
   }, []);
 
   return response ? response.readRoot() : null;
