@@ -8,12 +8,14 @@
 
 import {Pool} from 'react-pg';
 import credentials from '../credentials.json';
+import {Button} from './SearchField.client';
 
 export const db = new Pool(credentials);
 
 export default function App({searchText}) {
   return (
     <div className="main">
+      <Button>Button</Button>
       <section className="col note-viewer">
         <NoteList searchText={searchText} />
       </section>
@@ -30,10 +32,12 @@ function NoteList({searchText}) {
   if (notes.length < 0) return null;
 
   return (
-    <ul className="notes-list">
-      {notes.map((note) => (
-        <li key={note.id}>{note.title}</li>
-      ))}
-    </ul>
+    <div>
+      <ul className="notes-list">
+        {notes.map((note) => (
+          <li key={note.id}>{note.title}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
