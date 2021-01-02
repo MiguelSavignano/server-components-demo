@@ -11,11 +11,10 @@ import credentials from '../credentials.json';
 
 export const db = new Pool(credentials);
 
-export default function App({selectedId, isEditing, searchText}) {
-  console.log("First App.server ")
+export default function App({searchText}) {
   return (
     <div className="main">
-      <section key={selectedId} className="col note-viewer">
+      <section className="col note-viewer">
         <NoteList searchText={searchText} />
       </section>
     </div>
@@ -28,15 +27,13 @@ function NoteList({searchText}) {
     ['%' + searchText + '%']
   ).rows;
 
-  if (notes.length < 0)  return null
+  if (notes.length < 0) return null;
 
   return (
     <ul className="notes-list">
       {notes.map((note) => (
-        <li key={note.id}>
-          {note.title}
-        </li>
+        <li key={note.id}>{note.title}</li>
       ))}
     </ul>
-  )
+  );
 }

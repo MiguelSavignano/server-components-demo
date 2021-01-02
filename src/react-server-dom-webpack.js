@@ -587,6 +587,8 @@ if (process.env.NODE_ENV !== 'production') {
       return response;
     }
 
+    // This method to process the fetch response with promises
+    // Transform the response from /react endpoint to react tree javascript object
     function processBinaryChunkFromResponse(fetchReponseBody) {
       var response = createResponse$1();
       return new Promise((resolve, reject) => {
