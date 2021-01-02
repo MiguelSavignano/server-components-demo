@@ -7,20 +7,23 @@
  */
 
 import {unstable_createRoot} from 'react-dom';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, Suspense} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-import {processBinaryChunkFromResponse} from './react-server-dom-webpack';
+import {createFromFetch} from 'react-server-dom-webpack';
+// import {processBinaryChunkFromResponse} from './react-server-dom-webpack';
 
 function Root({initialCache}) {
   return (
-    <ErrorBoundary FallbackComponent={Error}>
-      <Content />
-    </ErrorBoundary>
+    <Suspense fallback={<h1>Loading...</h1>}>
+      <ErrorBoundary FallbackComponent={Error}>
+        <Content2 />
+      </ErrorBoundary>
+    </Suspense>
   );
 }
 
 function Content() {
-  const [location, setLocation] = useState({ searchText: '' });
+  const [location, setLocation] = useState({searchText: ''});
   const [response, setResponse] = useState(null);
 
   useEffect(() => {
@@ -36,6 +39,16 @@ function Content() {
   }, []);
 
   return response;
+}
+
+function Content2() {
+  const [location, setLocation] = useState({searchText: ''});
+
+  const response = createFromFetch(
+      fetch(`/react?location=${encodeURIComponent(JSON.stringify(location))}`)
+    );
+
+  return response ? response.readRoot() : null;
 }
 
 function Error({error}) {
