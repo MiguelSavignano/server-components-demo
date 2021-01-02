@@ -6,8 +6,6 @@
  *
  */
 
-import {Suspense} from 'react';
-
 import {Pool} from 'react-pg';
 import credentials from '../credentials.json';
 

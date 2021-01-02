@@ -4,21 +4,17 @@ function Content2() {
     isEditing: false,
     searchText: '',
   });
-
   const cache = unstable_getCacheForType(() => new Map());
   const key = JSON.stringify(location);
   const [response, setResponse] = useState(cache.get(key));
 
-  useEffect(() => {
-    const response = createFromFetch(fetch('/react?location=' + encodeURIComponent(key)).then((r) =>
-      r.text()
-    ))
-    console.log({ response });
-    cache.set(key, response);
-      setResponse(response);
+  useEffect(async () => {
+    const reactTree = await createFromFetch(fetch('/react?location=' + encodeURIComponent(key)));
+    console.log(reactTree)
+    console.log(typeof reactTree)
+    console.log(response.readRoot())
   }, []);
 
-  return (
-      response ? response.readRoot() : null
-  );
+  // return response.readRoot();
+  return null;
 }
