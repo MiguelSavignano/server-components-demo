@@ -7,8 +7,10 @@
  */
 
 import {unstable_createRoot} from 'react-dom';
-import {useState, Suspense} from 'react';
+import {useState, Suspense, useEffect} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
+import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
+import {createFromFetch} from 'react-server-dom-webpack';
 
 import {useServerResponse} from './Cache.client';
 import {LocationContext} from './LocationContext.client';
@@ -18,11 +20,39 @@ function Root({initialCache}) {
     <Suspense fallback={null}>
       <ErrorBoundary FallbackComponent={Error}>
         <Content />
+        {/* <Content2 /> */}
       </ErrorBoundary>
     </Suspense>
   );
 }
 
+function Content2() {
+  const [location, setLocation] = useState({
+    selectedId: null,
+    isEditing: false,
+    searchText: '',
+  });
+
+  const cache = unstable_getCacheForType(() => new Map());
+  const key = JSON.stringify(location);
+  const [response, setResponse] = useState(cache.get(key));
+
+  useEffect(() => {
+    const response = createFromFetch(fetch('/react?location=' + encodeURIComponent(key)).then((r) =>
+      r.text()
+    ))
+    console.log({ response });
+    cache.set(key, response);
+      setResponse(response);
+  }, []);
+
+  return (
+    <LocationContext.Provider value={[location, setLocation]}>
+      {console.log("HELLO", response && response.readRoot())}
+      {response ? response.readRoot() : null}
+    </LocationContext.Provider>
+  );
+}
 function Content() {
   const [location, setLocation] = useState({
     selectedId: null,
@@ -30,6 +60,9 @@ function Content() {
     searchText: '',
   });
   const response = useServerResponse(location);
+  console.log({
+    data: response.readRoot()
+  })
   return (
     <LocationContext.Provider value={[location, setLocation]}>
       {response.readRoot()}
