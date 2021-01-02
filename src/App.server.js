@@ -18,9 +18,7 @@ export default function App({selectedId, isEditing, searchText}) {
   return (
     <div className="main">
       <section key={selectedId} className="col note-viewer">
-          <Suspense fallback={null}>
-            <NoteList searchText={searchText} />
-          </Suspense>
+        <NoteList searchText={searchText} />
       </section>
     </div>
   );
