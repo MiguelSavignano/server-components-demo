@@ -93,32 +93,6 @@ app.get('/react', function(req, res) {
   sendResponse(req, res, null);
 });
 
-const NOTES_PATH = path.resolve(__dirname, '../notes');
-
-app.get(
-  '/notes',
-  handleErrors(async function(_req, res) {
-    const {rows} = await pool.query('select * from notes order by id desc');
-    res.json(rows);
-  })
-);
-
-app.get(
-  '/notes/:id',
-  handleErrors(async function(req, res) {
-    const {rows} = await pool.query('select * from notes where id = $1', [
-      req.params.id,
-    ]);
-    res.json(rows[0]);
-  })
-);
-
-app.get('/sleep/:ms', function(req, res) {
-  setTimeout(() => {
-    res.json({ok: true});
-  }, req.params.ms);
-});
-
 app.use(express.static('build'));
 app.use(express.static('public'));
 

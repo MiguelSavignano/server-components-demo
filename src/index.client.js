@@ -11,9 +11,15 @@ import {useState, Suspense, useEffect} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
 import {createFromFetch} from 'react-server-dom-webpack';
+import {createContext, useContext} from 'react';
 
 import {useServerResponse} from './Cache.client';
-import {LocationContext} from './LocationContext.client';
+
+export const LocationContext = createContext();
+export function useLocation() {
+  return useContext(LocationContext);
+}
+
 
 function Root({initialCache}) {
   return (

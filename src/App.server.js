@@ -7,9 +7,16 @@
  */
 
 import {Suspense} from 'react';
-import NoteList from './NoteList.server';
+
+import {Pool} from 'react-pg';
+import credentials from '../credentials.json';
+
+// Don't keep credentials in the source tree in a real app!
+export const db = new Pool(credentials);
+
 
 export default function App({selectedId, isEditing, searchText}) {
+  console.log("First App.server ")
   return (
     <div className="main">
       <section key={selectedId} className="col note-viewer">
@@ -19,4 +26,23 @@ export default function App({selectedId, isEditing, searchText}) {
       </section>
     </div>
   );
+}
+
+function NoteList({searchText}) {
+  const notes = db.query(
+    `select * from notes where title ilike $1 order by id desc`,
+    ['%' + searchText + '%']
+  ).rows;
+
+  if (notes.length < 0)  return null
+
+  return (
+    <ul className="notes-list">
+      {notes.map((note) => (
+        <li key={note.id}>
+          {note.title}
+        </li>
+      ))}
+    </ul>
+  )
 }
