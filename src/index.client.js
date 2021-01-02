@@ -9,8 +9,8 @@
 import {unstable_createRoot} from 'react-dom';
 import {useState, Suspense, useEffect} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
-import {createFromFetch} from './react-server-dom-webpack';
+import {unstable_getCacheForType} from 'react';
+import {processBinaryChunkFromResponse} from './react-server-dom-webpack';
 
 function Root({initialCache}) {
   return (
@@ -30,17 +30,21 @@ function Content() {
   });
   const cache = unstable_getCacheForType(() => new Map());
   const key = JSON.stringify(location);
-  const [response, setResponse] = useState(cache.get(key));
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    async function fetchData(){
-      const reactTree = await createFromFetch(fetch('/react?location=' + encodeURIComponent(key)));
-      setResponse(reactTree)
+    async function fetchData() {
+      const response = await fetch(
+        '/react?location=' + encodeURIComponent(key)
+      );
+      const reactTree = await processBinaryChunkFromResponse(response.body);
+      setResponse(reactTree);
     }
-    fetchData()
+
+    fetchData();
   }, []);
 
-  return response ? response.readRoot() : null;
+  return response;
 }
 
 function Error({error}) {
@@ -55,3 +59,6 @@ function Error({error}) {
 const initialCache = new Map();
 const root = unstable_createRoot(document.getElementById('root'));
 root.render(<Root initialCache={initialCache} />);
+
+// `J0:["$","div",null,{"className":"main","children":["$","section","null",{"className":"col note-viewer","children":"@1"}]}]
+// J1:["$","ul",null,{"className":"notes-list","children":[["$","li","4",{"children":"Make a thing"}],["$","li","3",{"children":"A note with a very long title because sometimes you need more words"}],["$","li","2",{"children":"I wrote this note today"}],["$","li","1",{"children":"Meeting Notes"}]]}]`
