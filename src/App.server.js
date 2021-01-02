@@ -11,9 +11,7 @@ import {Suspense} from 'react';
 import {Pool} from 'react-pg';
 import credentials from '../credentials.json';
 
-// Don't keep credentials in the source tree in a real app!
 export const db = new Pool(credentials);
-
 
 export default function App({selectedId, isEditing, searchText}) {
   console.log("First App.server ")
