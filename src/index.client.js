@@ -25,7 +25,7 @@ function Content() {
   const [remoteState, setRemoteState] = useState({searchText: ''});
   const key = JSON.stringify(remoteState);
   // only works with Suspense
-  const response = concurrentCreateFromFetch(key, fetch('/react?location=' + encodeURIComponent(key)))
+  const response = concurrentCreateFromFetch(key, () => fetch('/react?location=' + encodeURIComponent(key)))
 
   return (
     <ServerContext.Provider value={[remoteState, setRemoteState]}>
