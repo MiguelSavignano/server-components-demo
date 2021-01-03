@@ -7,30 +7,14 @@
  */
 
 import {unstable_createRoot} from 'react-dom';
-import {useState, useEffect, Suspense} from 'react';
-import {unstable_getCacheForType, unstable_useCacheRefresh} from 'react';
+import {useState, Suspense} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-import {createFromFetch} from 'react-server-dom-webpack';
 import {ServerContext} from './ServerContext.client';
-// import {processBinaryChunkFromResponse} from './react-server-dom-webpack';
+import {concurrentCreateFromFetch} from './lib';
 
-function createResponseCache() {
-  return new Map();
-}
-
-export function useCreateFromFetch(key, fetchRequest) {
-  const cache = unstable_getCacheForType(createResponseCache);
-  let response = cache.get(key);
-  if (response) return response;
-
-  response = createFromFetch(fetchRequest);
-  cache.set(key, response);
-  return response;
-}
-
-function Root({initialCache}) {
+function ClientApp({initialCache}) {
   return (
-    <Suspense fallback={<h1>Loading...</h1>}>
+    <Suspense fallback={<p>Loading...</p>}>
       <ErrorBoundary FallbackComponent={Error}>
         <Content />
       </ErrorBoundary>
@@ -41,7 +25,8 @@ function Root({initialCache}) {
 function Content() {
   const [remoteState, setRemoteState] = useState({searchText: ''});
   const key = JSON.stringify(remoteState);
-  const response = useCreateFromFetch(key, fetch('/react?location=' + encodeURIComponent(key)))
+  // only works with Suspense
+  const response = concurrentCreateFromFetch(key, fetch('/react?location=' + encodeURIComponent(key)))
 
   return (
     <ServerContext.Provider value={[remoteState, setRemoteState]}>
@@ -61,24 +46,4 @@ function Error({error}) {
 
 const initialCache = new Map();
 const root = unstable_createRoot(document.getElementById('root'));
-root.render(<Root initialCache={initialCache} />);
-
-
-// function Content() {
-//   const [location, setLocation] = useState({searchText: ''});
-//   const [response, setResponse] = useState(null);
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       const response = await fetch(
-//         `/react?location=${encodeURIComponent(JSON.stringify(location))}`
-//       );
-//       const reactTree = await processBinaryChunkFromResponse(response.body);
-//       setResponse(reactTree);
-//     }
-
-//     fetchData();
-//   }, []);
-
-//   return response;
-// }
+root.render(<ClientApp initialCache={initialCache} />);

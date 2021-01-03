@@ -6,10 +6,14 @@
  *
  */
 
-import {createContext, useContext} from 'react';
+import {createContext, useContext, unstable_useTransition} from 'react';
 
 export const ServerContext = createContext();
 
 export function useServerContext() {
-  return useContext(ServerContext);
+  const [startStateTransition, isWaiting] = unstable_useTransition(false);
+  const [remoteState, setRemoteStateOriginal] = useContext(ServerContext)
+  const setRemoteState = (newState) => startStateTransition(() => setRemoteStateOriginal(newState))
+
+  return [remoteState, setRemoteState, isWaiting, startStateTransition]
 }
