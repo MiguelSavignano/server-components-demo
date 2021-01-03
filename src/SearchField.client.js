@@ -7,11 +7,11 @@
  */
 
 import {useState, unstable_useTransition} from 'react';
-// import {useLocation} from './LocationContext.client';
+import {useServerContext} from './ServerContext.client';
 
 export function SearchField() {
   const [text, setText] = useState('');
-  // const [, setLocation] = useLocation();
+  const [, setRemoteState] = useServerContext();
   return (
     <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
       <label className="offscreen" htmlFor="sidebar-search-input">
@@ -25,6 +25,9 @@ export function SearchField() {
           const newText = e.target.value;
           setText(newText);
             console.log("seach", newText)
+            setRemoteState({
+              searchText: newText
+            })
             // setLocation((loc) => ({
             //   ...loc,
             //   searchText: newText,
