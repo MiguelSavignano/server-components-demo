@@ -7,8 +7,10 @@
  */
 
 import {Pool} from 'react-pg';
+import {fetch} from 'react-fetch';
 import credentials from '../credentials.json';
 import {SearchField} from './SearchField.client';
+import { titlesWithRating } from './movies-service.server';
 
 export const db = new Pool(credentials);
 
@@ -18,6 +20,7 @@ export default function App({searchText}) {
       <section className="col note-viewer">
         <SearchField />
         <NoteList searchText={searchText} />
+        <MoviesList />
       </section>
     </div>
   );
@@ -36,6 +39,25 @@ function NoteList({searchText}) {
       <ul className="notes-list">
         {notes.map((note) => (
           <li key={note.id}>{note.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function MoviesList() {
+  const {cartelera} = fetch(
+    'https://www.cinesa.es/Cines/Horarios/196/28000.json',
+    {insecureHTTPParser: true}
+  ).json();
+  const movies = cartelera[0].peliculas.map(it => ({title: it.titulo}))
+  // const movies = titlesWithRating()
+
+  return (
+    <div>
+      <ul className="notes-list">
+        { movies.map((movie) => (
+          <li key={movie.title}>{movie.title}</li>
         ))}
       </ul>
     </div>
