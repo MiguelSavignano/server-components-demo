@@ -1,10 +1,19 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
+import {createFromFetch} from 'react-server-dom-webpack';
+import {unstable_getCacheForType } from 'react';
+
+function createResponseCache() {
+  return new Map();
+}
+
+export function concurrentCreateFromFetch(key, fetchRequest) {
+  const cache = unstable_getCacheForType(createResponseCache);
+  let response = cache.get(key);
+  if (response) return response;
+
+  response = createFromFetch(fetchRequest);
+  cache.set(key, response);
+  return response;
+}
 
 import {createContext, useContext, unstable_useTransition} from 'react';
 

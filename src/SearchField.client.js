@@ -7,7 +7,7 @@
  */
 
 import {useState} from 'react';
-import {useServerContext} from './ServerContext.client';
+import {useServerContext} from './react-lib.client';
 
 export function SearchField() {
   const [text, setText] = useState('');

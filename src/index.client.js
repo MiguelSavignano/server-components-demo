@@ -9,8 +9,7 @@
 import {unstable_createRoot} from 'react-dom';
 import {useState, Suspense} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-import {ServerContext} from './ServerContext.client';
-import {concurrentCreateFromFetch} from './lib';
+import {concurrentCreateFromFetch, ServerContext} from './react-lib.client';
 
 function ClientApp({initialCache}) {
   return (
