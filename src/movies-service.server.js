@@ -1,15 +1,23 @@
 import cheerio from 'cheerio'
 import { fetch } from 'react-fetch'
+let cacheReponse = false
 
 export function titlesWithRating() {
+  if(cacheReponse) return false
+
   const titles = fetchTitles()
-  const result = Promise.all(titles.map(title => {
+  // console.log("END", titles)
+
+  const result = titles.map(title => {
     const imbdID = fetchIMdbID(title)
     console.log({title})
     const rating = fetchRatingIMdb(imbdID)
     return {title, rating}
-  }))
+  })
+  console.log("END", result)
+  cacheReponse = result
   return result
+  // return titles.map(it => ({title: it}))
 }
 
 function fetchScraping({url, selector, array = false}, callback = (node) => node.text()) {

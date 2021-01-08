@@ -46,12 +46,16 @@ function NoteList({searchText}) {
 }
 
 function MoviesList() {
-  const {cartelera} = fetch(
-    'https://www.cinesa.es/Cines/Horarios/196/28000.json',
-    {insecureHTTPParser: true}
-  ).json();
-  const movies = cartelera[0].peliculas.map(it => ({title: it.titulo}))
-  // const movies = titlesWithRating()
+  // const {cartelera} = fetch(
+  //   'https://www.cinesa.es/Cines/Horarios/196/28000.json',
+  //   {insecureHTTPParser: true}
+  // ).json();
+  // const movies = cartelera[0].peliculas.map(it => ({title: it.titulo}))
+
+  console.log("CALL")
+  const movies = titlesWithRating()
+
+  if (movies.length < 0) return null;
 
   return (
     <div>
